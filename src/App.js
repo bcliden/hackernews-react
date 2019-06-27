@@ -33,12 +33,15 @@ class App extends Component {
     results: null,
     searchKey: "",
     searchTerm: DEFAULT_QUERY,
-    error: null
+    error: null,
+    isLoading: false
   };
 
   source = axios.CancelToken.source();
 
   fetchSearchTopStories = (searchTerm, page = 0) => {
+    this.setState({ isLoading: true });
+
     axios
       .get(
         `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}&${PARAM_TAGS}${DEFAULT_TAGS}`,
@@ -69,7 +72,8 @@ class App extends Component {
       results: {
         ...results,
         [searchKey]: { hits: updatedHits, page }
-      }
+      },
+      isLoading: false
     });
   };
 
@@ -105,7 +109,7 @@ class App extends Component {
   };
 
   render() {
-    const { searchTerm, searchKey, results, error } = this.state;
+    const { searchTerm, searchKey, results, error, isLoading } = this.state;
     const page =
       (results && results[searchKey] && results[searchKey].page) || 0;
     const list =
@@ -129,11 +133,15 @@ class App extends Component {
           <Table list={list} onDismiss={this.onDismiss} />
         )}
         <div className="interactions">
-          <Button
-            onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}
-          >
-            More
-          </Button>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <Button
+              onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}
+            >
+              More
+            </Button>
+          )}
         </div>
       </div>
     );
@@ -151,14 +159,28 @@ class App extends Component {
   }
 }
 
-const Search = ({ value, onChange, onSubmit, children }) => {
-  return (
-    <form onSubmit={onSubmit}>
-      <input type="text" value={value} onChange={onChange} />
-      <button type="submit">{children}</button>
-    </form>
-  );
-};
+class Search extends Component {
+  render() {
+    const { value, onChange, onSubmit, children } = this.props;
+    return (
+      <form onSubmit={onSubmit}>
+        <input
+          type="text"
+          value={value}
+          onChange={onChange}
+          ref={el => (this.input = el)}
+        />
+        <button type="submit">{children}</button>
+      </form>
+    );
+  }
+
+  componentDidMount() {
+    if (this.input) {
+      this.input.focus();
+    }
+  }
+}
 
 Search.propTypes = {
   value: PropTypes.string.isRequired,
@@ -230,6 +252,13 @@ Button.propTypes = {
   className: PropTypes.string,
   children: PropTypes.node.isRequired
 };
+
+const Loading = () => (
+  <div className="lds-ripple">
+    <div />
+    <div />
+  </div>
+);
 
 export default App;
 
