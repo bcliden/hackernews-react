@@ -13,6 +13,7 @@ exports[`App has a valid snapshot 1`] = `
       <input
         onChange={[Function]}
         type="text"
+        value="redux"
       />
       <button
         type="submit"
@@ -27,13 +28,12 @@ exports[`App has a valid snapshot 1`] = `
   <div
     className="interactions"
   >
-    <button
-      className=""
-      onClick={[Function]}
-      type="button"
+    <div
+      className="lds-ripple"
     >
-      More
-    </button>
+      <div />
+      <div />
+    </div>
   </div>
 </div>
 `;

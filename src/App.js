@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { sortBy } from "lodash";
 import PropTypes from "prop-types";
 import "./App.css";
 
@@ -14,6 +15,14 @@ const PARAM_SEARCH = "query=";
 const PARAM_PAGE = "page=";
 const PARAM_HPP = "hitsPerPage=";
 const PARAM_TAGS = "tags=";
+
+const SORTS = {
+  NONE: list => list,
+  TITLE: list => sortBy(list, "title"),
+  AUTHOR: list => sortBy(list, "author"),
+  COMMENTS: list => sortBy(list, "num_comments").reverse(),
+  POINTS: list => sortBy(list, "points").reverse()
+};
 
 // styles
 const largeColumn = {
@@ -34,7 +43,8 @@ class App extends Component {
     searchKey: "",
     searchTerm: DEFAULT_QUERY,
     error: null,
-    isLoading: false
+    isLoading: false,
+    sortKey: "NONE"
   };
 
   source = axios.CancelToken.source();
@@ -108,8 +118,19 @@ class App extends Component {
     this.setState({ searchTerm: e.target.value });
   };
 
+  onSort = sortKey => {
+    this.setState({ sortKey });
+  };
+
   render() {
-    const { searchTerm, searchKey, results, error, isLoading } = this.state;
+    const {
+      searchTerm,
+      searchKey,
+      sortKey,
+      results,
+      error,
+      isLoading
+    } = this.state;
     const page =
       (results && results[searchKey] && results[searchKey].page) || 0;
     const list =
@@ -125,23 +146,27 @@ class App extends Component {
             Search
           </Search>
         </div>
-        {error ? (
+        {/* {error ? (
           <div className="interactions">
             <p>Something went wrong.</p>
           </div>
         ) : (
           <Table list={list} onDismiss={this.onDismiss} />
-        )}
+        )} */}
+        <TableWithError
+          error={error}
+          list={list}
+          sortKey={sortKey}
+          onSort={this.onSort}
+          onDismiss={this.onDismiss}
+        />
         <div className="interactions">
-          {isLoading ? (
-            <Loading />
-          ) : (
-            <Button
-              onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}
-            >
-              More
-            </Button>
-          )}
+          <ButtonWithLoading
+            isLoading={isLoading}
+            onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}
+          >
+            More
+          </ButtonWithLoading>
         </div>
       </div>
     );
@@ -191,19 +216,43 @@ Search.propTypes = {
 
 class Table extends Component {
   shouldComponentUpdate(nextProps, nextState) {
-    // prevent table from rerendering all the time
-    if (this.props.list === nextProps.list) {
-      console.log(false);
+    // prevent table from rerendering on every keystroke
+    if (
+      this.props.list === nextProps.list &&
+      this.props.sortKey === nextProps.sortKey
+    ) {
       return false;
     }
-    console.log(true);
     return true;
   }
   render() {
-    const { list, onDismiss } = this.props;
+    const { list, sortKey, onSort, onDismiss } = this.props;
     return (
       <div className="table">
-        {list.map(item => {
+        <div className="table-header">
+          <span style={largeColumn}>
+            <Sort sortKey={"TITLE"} onSort={onSort}>
+              Title
+            </Sort>
+          </span>
+          <span style={mediumColumn}>
+            <Sort sortKey={"AUTHOR"} onSort={onSort}>
+              Author
+            </Sort>
+          </span>
+          <span style={smallColumn}>
+            <Sort sortKey={"COMMENTS"} onSort={onSort}>
+              Comments
+            </Sort>
+          </span>
+          <span style={smallColumn}>
+            <Sort sortKey={"POINTS"} onSort={onSort}>
+              Points
+            </Sort>
+          </span>
+          <span style={smallColumn}>Archive</span>
+        </div>
+        {SORTS[sortKey](list).map(item => {
           return (
             <div key={item.objectID} className="table-row">
               <span style={largeColumn}>
@@ -258,6 +307,28 @@ const Loading = () => (
     <div />
     <div />
   </div>
+);
+
+const withLoading = Component => ({ isLoading, ...rest }) =>
+  isLoading ? <Loading /> : <Component {...rest} />;
+
+const ButtonWithLoading = withLoading(Button);
+
+const withError = Component => ({ error, ...rest }) =>
+  error ? (
+    <div className="interactions">
+      <p>Something went wrong.</p>
+    </div>
+  ) : (
+    <Component {...rest} />
+  );
+
+const TableWithError = withError(Table);
+
+const Sort = ({ sortKey, onSort, children }) => (
+  <Button onClick={() => onSort(sortKey)} className="button-inline">
+    {children}
+  </Button>
 );
 
 export default App;
