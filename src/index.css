@@ -1,7 +1,7 @@
 body {
   color: #222;
   background: #f4f4f4;
-  font: 100 14px CoreSans, Arial, sans-serif;
+  font: 400 14px CoreSans, Arial, sans-serif;
 }
 
 a {
@@ -31,7 +31,7 @@ button {
   border-radius: 5px;
   border: 1px solid #dddddd;
   background: transparent;
-  color: #000000;
+  color: #808080;
   cursor: pointer;
 }
 
