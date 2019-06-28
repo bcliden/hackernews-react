@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import axios from "axios";
 
 import {
@@ -18,6 +18,7 @@ import Search from "./components/Search";
 import { withError, withLoading } from "./components/HOCs";
 import { updateSearchTopStoriesState } from "./utils";
 import "./App.css";
+import Header from "./components/Layout/Header";
 
 // HOCs
 const ButtonWithLoading = withLoading(Button);
@@ -104,26 +105,33 @@ class App extends Component {
     const list =
       (results && results[searchKey] && results[searchKey].hits) || [];
     return (
-      <div className="page">
-        <div className="interactions">
-          <Search
-            value={searchTerm}
-            onChange={this.onSearchChange}
-            onSubmit={this.onSearchSubmit}
-          >
-            Search
-          </Search>
+      <Fragment>
+        <Header>Hacker News</Header>
+        <div className="page">
+          <div className="interactions">
+            <Search
+              value={searchTerm}
+              onChange={this.onSearchChange}
+              onSubmit={this.onSearchSubmit}
+            >
+              Search
+            </Search>
+          </div>
+          <TableWithError
+            error={error}
+            list={list}
+            onDismiss={this.onDismiss}
+          />
+          <div className="interactions">
+            <ButtonWithLoading
+              isLoading={isLoading}
+              onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}
+            >
+              More
+            </ButtonWithLoading>
+          </div>
         </div>
-        <TableWithError error={error} list={list} onDismiss={this.onDismiss} />
-        <div className="interactions">
-          <ButtonWithLoading
-            isLoading={isLoading}
-            onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}
-          >
-            More
-          </ButtonWithLoading>
-        </div>
-      </div>
+      </Fragment>
     );
   }
 
