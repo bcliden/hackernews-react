@@ -56,7 +56,6 @@ class App extends Component {
     const { hits, page } = result;
 
     // give setState a func here to avoid stale state
-    // also much more testable
     this.setState(updateSearchTopStoriesState(hits, page));
   };
 
@@ -115,13 +114,6 @@ class App extends Component {
             Search
           </Search>
         </div>
-        {/* {error ? (
-          <div className="interactions">
-            <p>Something went wrong.</p>
-          </div>
-        ) : (
-          <Table list={list} onDismiss={this.onDismiss} />
-        )} */}
         <TableWithError error={error} list={list} onDismiss={this.onDismiss} />
         <div className="interactions">
           <ButtonWithLoading
