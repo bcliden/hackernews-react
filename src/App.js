@@ -44,9 +44,7 @@ class App extends Component {
     searchKey: "",
     searchTerm: DEFAULT_QUERY,
     error: null,
-    isLoading: false,
-    sortKey: "NONE",
-    isSortReverse: false
+    isLoading: false
   };
 
   source = axios.CancelToken.source();
@@ -64,55 +62,50 @@ class App extends Component {
         if (axios.isCancel(error)) {
           console.log("Request canceled", error.message);
         } else {
-          this.setState({ error });
+          this.setState({ error, isLoading: false });
         }
       });
   };
 
   setSearchTopStories = result => {
     const { hits, page } = result;
-    const { searchKey, results } = this.state;
 
-    // check if there are old hits
-    const oldHits =
-      results && results[searchKey] ? results[searchKey].hits : [];
-
-    // spread all hits together
-    const updatedHits = [...oldHits, ...hits];
-
-    this.setState({
-      results: {
-        ...results,
-        [searchKey]: { hits: updatedHits, page }
-      },
-      isLoading: false
-    });
+    // give setState a func here to avoid stale state
+    // also much more testable
+    this.setState(updateSearchTopStoriesState(hits, page));
   };
 
   needsToSearchTopStories = searchTerm => !this.state.results[searchTerm];
 
   onSearchSubmit = e => {
     e.preventDefault();
-    const { searchTerm } = this.state;
-    this.setState({ searchKey: searchTerm });
-    if (this.needsToSearchTopStories(searchTerm)) {
-      this.fetchSearchTopStories(searchTerm);
-    }
+
+    // func used here to avoid getting stale state
+    this.setState(prevState => {
+      const { searchTerm } = prevState;
+      if (this.needsToSearchTopStories(searchTerm)) {
+        this.fetchSearchTopStories(searchTerm);
+      }
+      return { searchKey: searchTerm };
+    });
   };
 
   onDismiss = id => {
-    const { searchKey, results } = this.state;
-    const { hits, page } = results[searchKey];
+    // func used here to avoid getting stale state
+    this.setState(prevState => {
+      const { searchKey, results } = prevState;
+      const { hits, page } = results[searchKey];
 
-    const updatedHits = hits.filter(item => {
-      return item.objectID !== id;
-    });
+      const updatedHits = hits.filter(item => {
+        return item.objectID !== id;
+      });
 
-    this.setState({
-      results: {
-        ...results,
-        [searchKey]: { hits: updatedHits, page }
-      }
+      return {
+        results: {
+          ...results,
+          [searchKey]: { hits: updatedHits, page }
+        }
+      };
     });
   };
 
@@ -120,22 +113,8 @@ class App extends Component {
     this.setState({ searchTerm: e.target.value });
   };
 
-  onSort = sortKey => {
-    const isSortReverse =
-      this.state.sortKey === sortKey && !this.state.isSortReverse;
-    this.setState({ sortKey, isSortReverse });
-  };
-
   render() {
-    const {
-      searchTerm,
-      searchKey,
-      sortKey,
-      results,
-      error,
-      isLoading,
-      isSortReverse
-    } = this.state;
+    const { searchTerm, searchKey, results, error, isLoading } = this.state;
     const page =
       (results && results[searchKey] && results[searchKey].page) || 0;
     const list =
@@ -158,14 +137,7 @@ class App extends Component {
         ) : (
           <Table list={list} onDismiss={this.onDismiss} />
         )} */}
-        <TableWithError
-          error={error}
-          list={list}
-          sortKey={sortKey}
-          isSortReverse={isSortReverse}
-          onSort={this.onSort}
-          onDismiss={this.onDismiss}
-        />
+        <TableWithError error={error} list={list} onDismiss={this.onDismiss} />
         <div className="interactions">
           <ButtonWithLoading
             isLoading={isLoading}
@@ -221,19 +193,23 @@ Search.propTypes = {
 };
 
 class Table extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
-    // prevent table from rerendering on every keystroke
-    if (
-      this.props.list === nextProps.list &&
-      this.props.sortKey === nextProps.sortKey &&
-      this.props.isSortReverse === nextProps.isSortReverse
-    ) {
-      return false;
-    }
-    return true;
-  }
+  state = {
+    sortKey: "NONE",
+    isSortReverse: false
+  };
+
+  onSort = sortKey => {
+    // func used here to avoid getting stale state
+    this.setState(prevState => {
+      const isSortReverse =
+        prevState.sortKey === sortKey && !prevState.isSortReverse;
+      return { sortKey, isSortReverse };
+    });
+  };
+
   render() {
-    const { list, sortKey, isSortReverse, onSort, onDismiss } = this.props;
+    const { list, onDismiss } = this.props;
+    const { sortKey, isSortReverse } = this.state;
     const sortedList = SORTS[sortKey](list);
     const reverseSortedList = isSortReverse ? sortedList.reverse() : sortedList;
     return (
@@ -242,7 +218,7 @@ class Table extends Component {
           <span style={largeColumn}>
             <Sort
               sortKey={"TITLE"}
-              onSort={onSort}
+              onSort={this.onSort}
               activeSortKey={sortKey}
               isSortReverse={isSortReverse}
             >
@@ -252,7 +228,7 @@ class Table extends Component {
           <span style={mediumColumn}>
             <Sort
               sortKey={"AUTHOR"}
-              onSort={onSort}
+              onSort={this.onSort}
               activeSortKey={sortKey}
               isSortReverse={isSortReverse}
             >
@@ -262,7 +238,7 @@ class Table extends Component {
           <span style={smallColumn}>
             <Sort
               sortKey={"COMMENTS"}
-              onSort={onSort}
+              onSort={this.onSort}
               activeSortKey={sortKey}
               isSortReverse={isSortReverse}
             >
@@ -272,7 +248,7 @@ class Table extends Component {
           <span style={smallColumn}>
             <Sort
               sortKey={"POINTS"}
-              onSort={onSort}
+              onSort={this.onSort}
               activeSortKey={sortKey}
               isSortReverse={isSortReverse}
             >
@@ -303,6 +279,18 @@ class Table extends Component {
         })}
       </div>
     );
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    // prevent table from rerendering on every keystroke
+    if (
+      this.props.list === nextProps.list &&
+      this.state.sortKey === nextState.sortKey &&
+      this.state.isSortReverse === nextState.isSortReverse
+    ) {
+      return false;
+    }
+    return true;
   }
 }
 
@@ -377,6 +365,24 @@ const Sort = ({ sortKey, activeSortKey, isSortReverse, onSort, children }) => {
   );
 };
 
+const updateSearchTopStoriesState = (hits, page) => prevState => {
+  const { searchKey, results } = prevState;
+
+  // check if there are old hits
+  const oldHits = results && results[searchKey] ? results[searchKey].hits : [];
+
+  // spread all hits together
+  const updatedHits = [...oldHits, ...hits];
+
+  return {
+    results: {
+      ...results,
+      [searchKey]: { hits: updatedHits, page }
+    },
+    isLoading: false
+  };
+};
+
 export default App;
 
-export { Button, Search, Table };
+export { Button, Search, Table, updateSearchTopStoriesState };
