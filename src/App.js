@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import { sortBy } from "lodash";
 import PropTypes from "prop-types";
+import classNames from "classnames";
 import "./App.css";
 
 // url constants
@@ -44,7 +45,8 @@ class App extends Component {
     searchTerm: DEFAULT_QUERY,
     error: null,
     isLoading: false,
-    sortKey: "NONE"
+    sortKey: "NONE",
+    isSortReverse: false
   };
 
   source = axios.CancelToken.source();
@@ -119,7 +121,9 @@ class App extends Component {
   };
 
   onSort = sortKey => {
-    this.setState({ sortKey });
+    const isSortReverse =
+      this.state.sortKey === sortKey && !this.state.isSortReverse;
+    this.setState({ sortKey, isSortReverse });
   };
 
   render() {
@@ -129,7 +133,8 @@ class App extends Component {
       sortKey,
       results,
       error,
-      isLoading
+      isLoading,
+      isSortReverse
     } = this.state;
     const page =
       (results && results[searchKey] && results[searchKey].page) || 0;
@@ -157,6 +162,7 @@ class App extends Component {
           error={error}
           list={list}
           sortKey={sortKey}
+          isSortReverse={isSortReverse}
           onSort={this.onSort}
           onDismiss={this.onDismiss}
         />
@@ -219,40 +225,63 @@ class Table extends Component {
     // prevent table from rerendering on every keystroke
     if (
       this.props.list === nextProps.list &&
-      this.props.sortKey === nextProps.sortKey
+      this.props.sortKey === nextProps.sortKey &&
+      this.props.isSortReverse === nextProps.isSortReverse
     ) {
       return false;
     }
     return true;
   }
   render() {
-    const { list, sortKey, onSort, onDismiss } = this.props;
+    const { list, sortKey, isSortReverse, onSort, onDismiss } = this.props;
+    const sortedList = SORTS[sortKey](list);
+    const reverseSortedList = isSortReverse ? sortedList.reverse() : sortedList;
     return (
       <div className="table">
         <div className="table-header">
           <span style={largeColumn}>
-            <Sort sortKey={"TITLE"} onSort={onSort}>
+            <Sort
+              sortKey={"TITLE"}
+              onSort={onSort}
+              activeSortKey={sortKey}
+              isSortReverse={isSortReverse}
+            >
               Title
             </Sort>
           </span>
           <span style={mediumColumn}>
-            <Sort sortKey={"AUTHOR"} onSort={onSort}>
+            <Sort
+              sortKey={"AUTHOR"}
+              onSort={onSort}
+              activeSortKey={sortKey}
+              isSortReverse={isSortReverse}
+            >
               Author
             </Sort>
           </span>
           <span style={smallColumn}>
-            <Sort sortKey={"COMMENTS"} onSort={onSort}>
+            <Sort
+              sortKey={"COMMENTS"}
+              onSort={onSort}
+              activeSortKey={sortKey}
+              isSortReverse={isSortReverse}
+            >
               Comments
             </Sort>
           </span>
           <span style={smallColumn}>
-            <Sort sortKey={"POINTS"} onSort={onSort}>
+            <Sort
+              sortKey={"POINTS"}
+              onSort={onSort}
+              activeSortKey={sortKey}
+              isSortReverse={isSortReverse}
+            >
               Points
             </Sort>
           </span>
           <span style={smallColumn}>Archive</span>
         </div>
-        {SORTS[sortKey](list).map(item => {
+        {reverseSortedList.map(item => {
           return (
             <div key={item.objectID} className="table-row">
               <span style={largeColumn}>
@@ -325,11 +354,28 @@ const withError = Component => ({ error, ...rest }) =>
 
 const TableWithError = withError(Table);
 
-const Sort = ({ sortKey, onSort, children }) => (
-  <Button onClick={() => onSort(sortKey)} className="button-inline">
-    {children}
-  </Button>
-);
+const Sort = ({ sortKey, activeSortKey, isSortReverse, onSort, children }) => {
+  const sortClass = classNames("button-inline", {
+    "button-active": sortKey === activeSortKey
+  });
+
+  const iconClass = classNames(
+    "fas",
+    { "fa-arrow-down": isSortReverse },
+    { "fa-arrow-up": !isSortReverse }
+  );
+
+  return (
+    <React.Fragment>
+      <Button onClick={() => onSort(sortKey)} className={sortClass}>
+        {children}
+      </Button>
+      {sortKey === activeSortKey ? (
+        <i className={iconClass} style={{ marginLeft: "0.5rem" }} />
+      ) : null}
+    </React.Fragment>
+  );
+};
 
 export default App;
 
