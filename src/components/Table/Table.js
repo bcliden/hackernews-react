@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-import { SORTS } from "../../constants";
+import { SORTS, COMMENTS_LINK_BASE } from "../../constants";
 import Button from "../Button";
 import Sort from "./Sort";
 
@@ -89,7 +89,11 @@ export class Table extends Component {
                 <a href={item.url}>{item.title}</a>
               </span>
               <span style={mediumColumn}>{item.author}</span>
-              <span style={smallColumn}>{item.num_comments}</span>
+              <span style={smallColumn}>
+                <a href={`${COMMENTS_LINK_BASE}${item.objectID}`}>
+                  {item.num_comments}
+                </a>
+              </span>
               <span style={smallColumn}>{item.points}</span>
               <span style={smallColumn}>
                 <Button

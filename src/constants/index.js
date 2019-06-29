@@ -7,6 +7,7 @@ export const DEFAULT_TAGS = "story";
 
 export const PATH_BASE = "https://hn.algolia.com/api/v1";
 export const PATH_SEARCH = "/search";
+export const COMMENTS_LINK_BASE = "https://news.ycombinator.com/item?id=";
 
 export const PARAM_SEARCH = "query=";
 export const PARAM_PAGE = "page=";
