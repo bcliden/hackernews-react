@@ -14,6 +14,10 @@ export const PARAM_PAGE = "page=";
 export const PARAM_HPP = "hitsPerPage=";
 export const PARAM_TAGS = "tags=";
 
+export const FRONT_PAGE_BASE = "https://hacker-news.firebaseio.com/v0/";
+export const FRONT_PAGE_ITEM = "item/";
+export const FRONT_PAGE_STORIES = "topstories.json";
+
 export const SORTS = {
   NONE: list => list,
   TITLE: list => sortBy(list, "title"),

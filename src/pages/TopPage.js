@@ -1,14 +1,10 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { updateTopStoriesState } from "../utils";
 
 import {
-  PATH_BASE,
-  PATH_SEARCH,
-  DEFAULT_HPP,
-  PARAM_PAGE,
-  PARAM_HPP,
-  PARAM_TAGS
+  FRONT_PAGE_BASE,
+  FRONT_PAGE_STORIES,
+  FRONT_PAGE_ITEM
 } from "../constants";
 
 import Table from "../components/Table";
@@ -21,6 +17,8 @@ const ButtonWithLoading = withLoading(Button);
 
 export class TopPage extends Component {
   state = {
+    postIndex: [],
+    page: 0,
     results: null,
     error: null,
     isLoading: false
@@ -28,53 +26,73 @@ export class TopPage extends Component {
 
   source = axios.CancelToken.source();
 
-  fetchTopStories = (page = 0) => {
+  fetchTopStoriesIndexes = async () => {
     this.setState({ isLoading: true });
-
-    axios
-      .get(
-        `${PATH_BASE}${PATH_SEARCH}?${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}&${PARAM_TAGS}front_page`,
-        { cancelToken: this.source.token }
-      )
-      .then(result => this.setTopStories(result.data))
-      .catch(error => {
-        if (axios.isCancel(error)) {
-          console.log("Request canceled", error.message);
-        } else {
-          this.setState({ error, isLoading: false });
-        }
-      });
+    const response = await axios.get(
+      `${FRONT_PAGE_BASE}${FRONT_PAGE_STORIES}`,
+      { cancelToken: this.source.token }
+    );
+    this.setState({ postIndex: response.data, isLoading: false });
   };
 
-  setTopStories = result => {
-    const { hits, page } = result;
+  fetchTopStories = async (page = 0) => {
+    this.setState({ isLoading: true, page });
+    const pageStart = page * 20;
+    const pageEnd = pageStart + 20;
 
+    const ids = this.state.postIndex.slice(pageStart, pageEnd);
+
+    const hydratedPosts = await Promise.all(
+      ids.map(async id => {
+        return await axios.get(
+          `${FRONT_PAGE_BASE}${FRONT_PAGE_ITEM}${id}.json`,
+          {
+            cancelToken: this.source.token
+          }
+        );
+      })
+    );
+
+    const posts = hydratedPosts.map(res => {
+      const post = res.data;
+      return {
+        ...post,
+        author: post.by,
+        num_comments: post.descendants,
+        points: post.score,
+        objectID: post.id
+      };
+    });
+    this.setTopStories(posts);
+  };
+
+  setTopStories = results => {
     // give setState a func here to avoid stale state
-    this.setState(updateTopStoriesState(hits, page));
+    this.setState(prevState => {
+      const oldResults = prevState.results ? prevState.results : [];
+      return {
+        isLoading: false,
+        results: [...oldResults, ...results]
+      };
+    });
   };
 
   onDismiss = id => {
     // func used here to avoid getting stale state
     this.setState(prevState => {
-      const { hits, page } = prevState.results;
-
-      const updatedHits = hits.filter(item => {
-        return item.objectID !== id;
+      const updatedResults = prevState.results.filter(item => {
+        return item.id !== id;
       });
 
       return {
-        results: {
-          hits: updatedHits,
-          page
-        }
+        results: [...updatedResults]
       };
     });
   };
 
   render() {
-    const { results, error, isLoading } = this.state;
-    const page = (results && results.page) || 0;
-    const list = (results && results.hits) || [];
+    const { results, page, error, isLoading } = this.state;
+    const list = results || [];
     return (
       <div className="page">
         <TableWithError error={error} list={list} onDismiss={this.onDismiss} />
@@ -90,9 +108,8 @@ export class TopPage extends Component {
     );
   }
 
-  componentDidMount() {
-    // const { searchTerm } = this.state;
-    // this.setState({ searchKey: searchTerm });
+  async componentDidMount() {
+    await this.fetchTopStoriesIndexes();
     this.fetchTopStories();
   }
 
