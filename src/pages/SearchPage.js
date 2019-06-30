@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { updateSearchTopStoriesState } from "../utils";
+import {
+  updateSearchPageState,
+  dismissStoryFromSearchPageState
+} from "../utils";
 
 import {
   PATH_BASE,
@@ -56,7 +59,7 @@ export class SearchPage extends Component {
     const { hits, page } = result;
 
     // give setState a func here to avoid stale state
-    this.setState(updateSearchTopStoriesState(hits, page));
+    this.setState(updateSearchPageState(hits, page));
   };
 
   needsToSearchTopStories = searchTerm => !this.state.results[searchTerm];
@@ -76,21 +79,22 @@ export class SearchPage extends Component {
 
   onDismiss = id => {
     // func used here to avoid getting stale state
-    this.setState(prevState => {
-      const { searchKey, results } = prevState;
-      const { hits, page } = results[searchKey];
+    // this.setState(prevState => {
+    //   const { searchKey, results } = prevState;
+    //   const { hits, page } = results[searchKey];
 
-      const updatedHits = hits.filter(item => {
-        return item.objectID !== id;
-      });
+    //   const updatedHits = hits.filter(item => {
+    //     return item.objectID !== id;
+    //   });
 
-      return {
-        results: {
-          ...results,
-          [searchKey]: { hits: updatedHits, page }
-        }
-      };
-    });
+    //   return {
+    //     results: {
+    //       ...results,
+    //       [searchKey]: { hits: updatedHits, page }
+    //     }
+    //   };
+    // });
+    this.setState(dismissStoryFromSearchPageState(id));
   };
 
   onSearchChange = e => {

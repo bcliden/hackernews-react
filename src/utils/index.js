@@ -1,4 +1,4 @@
-export const updateSearchTopStoriesState = (hits, page) => prevState => {
+export const updateSearchPageState = (hits, page) => prevState => {
   const { searchKey, results } = prevState;
 
   // check if there are old hits
@@ -16,20 +16,36 @@ export const updateSearchTopStoriesState = (hits, page) => prevState => {
   };
 };
 
-export const updateTopStoriesState = (hits, page) => prevState => {
-  const { results } = prevState;
+export const updateTopPageState = results => prevState => {
+  const oldResults = prevState.results ? prevState.results : [];
+  return {
+    isLoading: false,
+    results: [...oldResults, ...results]
+  };
+};
 
-  // check if there are old hits
-  const oldHits = results ? results.hits : [];
+export const dismissStoryFromTopPageState = id => prevState => {
+  const updatedResults = prevState.results.filter(item => {
+    return item.id !== id;
+  });
 
-  // spread all hits together
-  const updatedHits = [...oldHits, ...hits];
+  return {
+    results: [...updatedResults]
+  };
+};
+
+export const dismissStoryFromSearchPageState = id => prevState => {
+  const { searchKey, results } = prevState;
+  const { hits, page } = results[searchKey];
+
+  const updatedHits = hits.filter(item => {
+    return item.objectID !== id;
+  });
 
   return {
     results: {
-      hits: updatedHits,
-      page
-    },
-    isLoading: false
+      ...results,
+      [searchKey]: { hits: updatedHits, page }
+    }
   };
 };

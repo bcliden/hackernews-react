@@ -10,6 +10,7 @@ import {
 import Table from "../components/Table";
 import Button from "../components/Button";
 import { withError, withLoading } from "../components/HOCs";
+import { updateTopPageState, dismissStoryFromTopPageState } from "../utils";
 
 //HOCs
 const TableWithError = withError(Table);
@@ -26,7 +27,9 @@ export class TopPage extends Component {
 
   source = axios.CancelToken.source();
 
-  fetchTopStoriesIndexes = async () => {
+  fetchTopStoriesIndex = async () => {
+    // grab indexes of top stories, save for later.
+    // just ids, generally 350-400 of them
     this.setState({ isLoading: true });
     const response = await axios.get(
       `${FRONT_PAGE_BASE}${FRONT_PAGE_STORIES}`,
@@ -36,14 +39,15 @@ export class TopPage extends Component {
   };
 
   fetchTopStories = async (page = 0) => {
+    // hydrate ids from the index cache
     this.setState({ isLoading: true, page });
     const pageStart = page * 20;
     const pageEnd = pageStart + 20;
 
-    const ids = this.state.postIndex.slice(pageStart, pageEnd);
+    const pageIDs = this.state.postIndex.slice(pageStart, pageEnd);
 
     const hydratedPosts = await Promise.all(
-      ids.map(async id => {
+      pageIDs.map(async id => {
         return await axios.get(
           `${FRONT_PAGE_BASE}${FRONT_PAGE_ITEM}${id}.json`,
           {
@@ -53,6 +57,7 @@ export class TopPage extends Component {
       })
     );
 
+    // convert the FireBase API format to the Algolia format (which Table expects)
     const posts = hydratedPosts.map(res => {
       const post = res.data;
       return {
@@ -68,26 +73,12 @@ export class TopPage extends Component {
 
   setTopStories = results => {
     // give setState a func here to avoid stale state
-    this.setState(prevState => {
-      const oldResults = prevState.results ? prevState.results : [];
-      return {
-        isLoading: false,
-        results: [...oldResults, ...results]
-      };
-    });
+    this.setState(updateTopPageState(results));
   };
 
   onDismiss = id => {
     // func used here to avoid getting stale state
-    this.setState(prevState => {
-      const updatedResults = prevState.results.filter(item => {
-        return item.id !== id;
-      });
-
-      return {
-        results: [...updatedResults]
-      };
-    });
+    this.setState(dismissStoryFromTopPageState(id));
   };
 
   render() {
@@ -109,7 +100,7 @@ export class TopPage extends Component {
   }
 
   async componentDidMount() {
-    await this.fetchTopStoriesIndexes();
+    await this.fetchTopStoriesIndex();
     this.fetchTopStories();
   }
 
