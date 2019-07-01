@@ -6,18 +6,6 @@ import Button from "../Button";
 import Sort from "./Sort";
 import "./Table.css";
 
-const largeColumn = {
-  width: "40%"
-};
-
-const mediumColumn = {
-  width: "30%"
-};
-
-const smallColumn = {
-  width: "10%"
-};
-
 export class Table extends Component {
   state = {
     sortKey: "NONE",
@@ -41,7 +29,7 @@ export class Table extends Component {
     return (
       <div className="table">
         <div className="table-header">
-          <span style={largeColumn}>
+          <span className="largeColumn">
             <Sort
               sortKey={"TITLE"}
               onSort={this.onSort}
@@ -51,7 +39,7 @@ export class Table extends Component {
               Title
             </Sort>
           </span>
-          <span style={mediumColumn}>
+          <span className="mediumColumn">
             <Sort
               sortKey={"AUTHOR"}
               onSort={this.onSort}
@@ -61,7 +49,7 @@ export class Table extends Component {
               Author
             </Sort>
           </span>
-          <span style={smallColumn}>
+          <span className="smallColumn">
             <Sort
               sortKey={"COMMENTS"}
               onSort={this.onSort}
@@ -71,7 +59,7 @@ export class Table extends Component {
               Comments
             </Sort>
           </span>
-          <span style={smallColumn}>
+          <span className="smallColumn">
             <Sort
               sortKey={"POINTS"}
               onSort={this.onSort}
@@ -81,22 +69,22 @@ export class Table extends Component {
               Points
             </Sort>
           </span>
-          <span style={smallColumn}>Archive</span>
+          <span className="smallColumn">Archive</span>
         </div>
         {reverseSortedList.map(item => {
           return (
             <div key={item.objectID} className="table-row">
-              <span style={largeColumn}>
+              <span className="largeColumn">
                 <a href={item.url}>{item.title}</a>
               </span>
-              <span style={mediumColumn}>{item.author}</span>
-              <span style={smallColumn}>
+              <span className="mediumColumn">{item.author}</span>
+              <span className="smallColumn">
                 <a href={`${COMMENTS_LINK_BASE}${item.objectID}`}>
                   {item.num_comments}
                 </a>
               </span>
-              <span style={smallColumn}>{item.points}</span>
-              <span style={smallColumn}>
+              <span className="smallColumn">{item.points}</span>
+              <span className="smallColumn">
                 <Button
                   onClick={() => onDismiss(item.objectID)}
                   className="button-inline"
