@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { SORTS, COMMENTS_LINK_BASE } from "../../constants";
 import Button from "../Button";
 import Sort from "./Sort";
+import "./Table.css";
 
 const largeColumn = {
   width: "40%"

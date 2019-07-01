@@ -2,11 +2,13 @@ header {
   background-color: #ff6600;
   display: flex;
   align-items: flex-end;
+  justify-content: flex-start;
 }
 
 header nav {
   position: relative;
   top: -3px;
+  padding-right: 2rem;
 }
 
 header h1 {
@@ -38,46 +40,6 @@ header a.selected {
   text-align: center;
 }
 
-.table {
-  margin: 20px 0;
-}
-
-.table-header {
-  display: flex;
-  line-height: 24px;
-  font-size: 16px;
-  padding: 0 10px;
-  justify-content: space-between;
-}
-
-.table-empty {
-  margin: 200px;
-  text-align: center;
-  font-size: 16px;
-}
-
-.table-row {
-  display: flex;
-  line-height: 24px;
-  white-space: nowrap;
-  margin: 10px 0;
-  padding: 10px;
-  background: #ffffff;
-  border: 1px solid #e3e3e3;
-}
-
-.table-header > span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 5px;
-}
-
-.table-row > span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 5px;
-}
-
 .button-inline {
   border-width: 0;
   background: transparent;
@@ -92,4 +54,25 @@ header a.selected {
 .button-active {
   border-radius: 0;
   border-bottom: 1px solid #38bb6c;
+}
+
+.forLargeScreen {
+  display: inline;
+}
+
+.forSmallScreen {
+  display: none;
+}
+
+@media screen and (max-width: 500px) {
+  header {
+    justify-content: space-between;
+  }
+  .forLargeScreen {
+    display: none;
+  }
+
+  .forSmallScreen {
+    display: inline;
+  }
 }
