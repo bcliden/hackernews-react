@@ -26,7 +26,7 @@ export const updateTopPageState = results => prevState => {
 
 export const dismissStoryFromTopPageState = id => prevState => {
   const updatedResults = prevState.results.filter(item => {
-    return item.id !== id;
+    return item.objectID !== id; // cast to Number b/c the data obj is a number
   });
 
   return {

@@ -65,7 +65,7 @@ export class TopPage extends Component {
         author: post.by,
         num_comments: post.descendants,
         points: post.score,
-        objectID: post.id
+        objectID: String(post.id) // Table expects a string
       };
     });
     this.setTopStories(posts);
