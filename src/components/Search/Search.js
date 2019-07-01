@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import "./Search.css";
 
 class Search extends Component {
   render() {
     const { value, onChange, onSubmit, children } = this.props;
     return (
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} className="search">
         <input
           type="text"
           value={value}

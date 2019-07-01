@@ -50,13 +50,45 @@
   width: 10%;
 }
 
+.smallTagLine {
+  display: none;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
 @media screen and (max-width: 500px) {
+  .table {
+    margin: 0;
+  }
   .table-row {
     margin: 0;
     border-bottom: none;
     flex-wrap: wrap;
+    line-height: 1.2rem;
+    white-space: inherit;
   }
   .table-row:last-of-type {
     border-bottom: 1px solid #e3e3e3;
+  }
+  .table-header {
+    display: none;
+  }
+  .largeColumn {
+    width: 100%;
+    display: block;
+  }
+
+  .mediumColumn {
+    /* width: 20%; */
+    display: none;
+  }
+
+  .smallColumn {
+    /* width: 10%; */
+    display: none;
+  }
+
+  .smallTagLine {
+    display: block;
   }
 }

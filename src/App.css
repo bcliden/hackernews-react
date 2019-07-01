@@ -57,7 +57,7 @@ header a.selected {
 }
 
 .forLargeScreen {
-  display: inline;
+  display: inherit;
 }
 
 .forSmallScreen {

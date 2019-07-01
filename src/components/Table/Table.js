@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 import { SORTS, COMMENTS_LINK_BASE } from "../../constants";
 import Button from "../Button";
+import Row from "./Row";
 import Sort from "./Sort";
 import "./Table.css";
 
@@ -29,7 +30,7 @@ export class Table extends Component {
     return (
       <div className="table">
         <div className="table-header">
-          <span className="largeColumn">
+          <span className="largeColumn ">
             <Sort
               sortKey={"TITLE"}
               onSort={this.onSort}
@@ -72,28 +73,7 @@ export class Table extends Component {
           <span className="smallColumn">Archive</span>
         </div>
         {reverseSortedList.map(item => {
-          return (
-            <div key={item.objectID} className="table-row">
-              <span className="largeColumn">
-                <a href={item.url}>{item.title}</a>
-              </span>
-              <span className="mediumColumn">{item.author}</span>
-              <span className="smallColumn">
-                <a href={`${COMMENTS_LINK_BASE}${item.objectID}`}>
-                  {item.num_comments}
-                </a>
-              </span>
-              <span className="smallColumn">{item.points}</span>
-              <span className="smallColumn">
-                <Button
-                  onClick={() => onDismiss(item.objectID)}
-                  className="button-inline"
-                >
-                  Dismiss
-                </Button>
-              </span>
-            </div>
-          );
+          return <Row key={item.objectID} item={item} onDismiss={onDismiss} />;
         })}
       </div>
     );
