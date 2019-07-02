@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-import { SORTS, COMMENTS_LINK_BASE } from "../../constants";
-import Button from "../Button";
+import { SORTS } from "../../constants";
 import Row from "./Row";
 import Sort from "./Sort";
 import "./Table.css";

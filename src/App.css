@@ -7,7 +7,7 @@ header {
 
 header nav {
   position: relative;
-  top: -3px;
+  bottom: 2px;
   padding-right: 2rem;
 }
 
@@ -16,14 +16,14 @@ header h1 {
   padding: 1rem 1rem 1rem 2rem;
   font-size: 3rem;
   position: relative;
-  bottom: -1.7rem;
+  bottom: -1.8rem;
   color: #f4f4f4;
 }
 
 header a {
   margin-left: 1rem;
   color: #f4f4f4;
-  text-decoration: none;
+  text-decoration: none !important;
   /* position: relative;
   top: 2px; */
 }
@@ -38,6 +38,7 @@ header a.selected {
 
 .interactions {
   text-align: center;
+  margin: 1rem 0;
 }
 
 .button-inline {
@@ -70,6 +71,13 @@ header a.selected {
   }
   header {
     justify-content: space-between;
+  }
+  header h1,
+  header a {
+    color: #ffffff;
+  }
+  header a.selected {
+    border-bottom: 3px solid #ffffff;
   }
   .forLargeScreen {
     display: none;
