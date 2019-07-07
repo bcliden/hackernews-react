@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import Loading from "../Loading";
+import Loading from '../Loading';
 
 export const withError = Component => ({ error, ...rest }) =>
   error ? (

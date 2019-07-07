@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import "./Search.css";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import './Search.css';
 
 class Search extends Component {
   render() {
@@ -29,7 +29,7 @@ Search.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 export default Search;

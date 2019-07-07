@@ -2,7 +2,8 @@ export const updateSearchPageState = (hits, page) => prevState => {
   const { searchKey, results } = prevState;
 
   // check if there are old hits
-  const oldHits = results && results[searchKey] ? results[searchKey].hits : [];
+  const oldHits =
+    results && results[searchKey] ? results[searchKey].hits : [];
 
   // spread all hits together
   const updatedHits = [...oldHits, ...hits];
@@ -10,9 +11,9 @@ export const updateSearchPageState = (hits, page) => prevState => {
   return {
     results: {
       ...results,
-      [searchKey]: { hits: updatedHits, page }
+      [searchKey]: { hits: updatedHits, page },
     },
-    isLoading: false
+    isLoading: false,
   };
 };
 
@@ -20,7 +21,7 @@ export const updateTopPageState = results => prevState => {
   const oldResults = prevState.results ? prevState.results : [];
   return {
     isLoading: false,
-    results: [...oldResults, ...results]
+    results: [...oldResults, ...results],
   };
 };
 
@@ -30,7 +31,7 @@ export const dismissStoryFromTopPageState = id => prevState => {
   });
 
   return {
-    results: [...updatedResults]
+    results: [...updatedResults],
   };
 };
 
@@ -45,7 +46,7 @@ export const dismissStoryFromSearchPageState = id => prevState => {
   return {
     results: {
       ...results,
-      [searchKey]: { hits: updatedHits, page }
-    }
+      [searchKey]: { hits: updatedHits, page },
+    },
   };
 };

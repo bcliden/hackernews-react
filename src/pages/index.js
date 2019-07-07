@@ -1,4 +1,4 @@
-import TopPage from "./TopPage";
-import SearchPage from "./SearchPage";
+import TopPage from './TopPage';
+import SearchPage from './SearchPage';
 
 export { TopPage, SearchPage };

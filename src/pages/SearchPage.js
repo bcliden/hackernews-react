@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import axios from "axios";
+import React, { Component } from 'react';
+import axios from 'axios';
 import {
   updateSearchPageState,
-  dismissStoryFromSearchPageState
-} from "../utils";
+  dismissStoryFromSearchPageState,
+} from '../utils';
 
 import {
   PATH_BASE,
@@ -14,13 +14,13 @@ import {
   PARAM_SEARCH,
   PARAM_PAGE,
   PARAM_HPP,
-  PARAM_TAGS
-} from "../constants";
+  PARAM_TAGS,
+} from '../constants';
 
-import Table from "../components/Table";
-import Button from "../components/Button";
-import Search from "../components/Search";
-import { withError, withLoading } from "../components/HOCs";
+import Table from '../components/Table';
+import Button from '../components/Button';
+import Search from '../components/Search';
+import { withError, withLoading } from '../components/HOCs';
 
 //HOCs
 const TableWithError = withError(Table);
@@ -29,10 +29,10 @@ const ButtonWithLoading = withLoading(Button);
 export class SearchPage extends Component {
   state = {
     results: null,
-    searchKey: "",
+    searchKey: '',
     searchTerm: DEFAULT_QUERY,
     error: null,
-    isLoading: false
+    isLoading: false,
   };
 
   source = axios.CancelToken.source();
@@ -43,12 +43,12 @@ export class SearchPage extends Component {
     axios
       .get(
         `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}&${PARAM_TAGS}${DEFAULT_TAGS}`,
-        { cancelToken: this.source.token }
+        { cancelToken: this.source.token },
       )
       .then(result => this.setSearchTopStories(result.data))
       .catch(error => {
         if (axios.isCancel(error)) {
-          console.log("Request canceled", error.message);
+          console.log('Request canceled', error.message);
         } else {
           this.setState({ error, isLoading: false });
         }
@@ -62,7 +62,8 @@ export class SearchPage extends Component {
     this.setState(updateSearchPageState(hits, page));
   };
 
-  needsToSearchTopStories = searchTerm => !this.state.results[searchTerm];
+  needsToSearchTopStories = searchTerm =>
+    !this.state.results[searchTerm];
 
   onSearchSubmit = e => {
     e.preventDefault();
@@ -102,11 +103,18 @@ export class SearchPage extends Component {
   };
 
   render() {
-    const { searchTerm, searchKey, results, error, isLoading } = this.state;
+    const {
+      searchTerm,
+      searchKey,
+      results,
+      error,
+      isLoading,
+    } = this.state;
     const page =
       (results && results[searchKey] && results[searchKey].page) || 0;
     const list =
-      (results && results[searchKey] && results[searchKey].hits) || [];
+      (results && results[searchKey] && results[searchKey].hits) ||
+      [];
     return (
       <div className="page">
         <div className="interactions">
@@ -118,11 +126,17 @@ export class SearchPage extends Component {
             Search
           </Search>
         </div>
-        <TableWithError error={error} list={list} onDismiss={this.onDismiss} />
+        <TableWithError
+          error={error}
+          list={list}
+          onDismiss={this.onDismiss}
+        />
         <div className="interactions">
           <ButtonWithLoading
             isLoading={isLoading}
-            onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}
+            onClick={() =>
+              this.fetchSearchTopStories(searchKey, page + 1)
+            }
           >
             More
           </ButtonWithLoading>
@@ -139,7 +153,7 @@ export class SearchPage extends Component {
 
   componentWillUnmount() {
     // cancel axios requests
-    this.source.cancel("Component unmounting.");
+    this.source.cancel('Component unmounting.');
   }
 }
 

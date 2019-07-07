@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import Button from "../Button";
-import { COMMENTS_LINK_BASE } from "../../constants";
+import React, { Component } from 'react';
+import Button from '../Button';
+import { COMMENTS_LINK_BASE } from '../../constants';
 
 export class Row extends Component {
   render() {
@@ -21,13 +21,13 @@ export class Row extends Component {
           <Button
             onClick={() => onDismiss(item.objectID)}
             className="button-inline"
-            style={{ transform: 'scale(1.6)'}}
+            style={{ transform: 'scale(1.6)' }}
           >
             &times;
           </Button>
         </span>
         <span className="smallTagLine">
-          by {item.author} | {item.points} points |{" "}
+          by {item.author} | {item.points} points |{' '}
           <a href={`${COMMENTS_LINK_BASE}${item.objectID}`}>
             {item.num_comments || 0}&nbsp;Comments
           </a>

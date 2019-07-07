@@ -1,56 +1,58 @@
-import React from "react";
+import React from 'react';
 
-import { updateSearchTopStoriesState } from "./index";
+import { updateSearchTopStoriesState } from './index';
 
-describe("updateSearchTopStoriesState", () => {
+describe('updateSearchTopStoriesState', () => {
   const results = {
     hits: [
       {
-        title: "3",
-        author: "3",
+        title: '3',
+        author: '3',
         num_comments: 1,
         points: 2,
-        objectID: "a"
+        objectID: 'a',
       },
       {
-        title: "4",
-        author: "4",
+        title: '4',
+        author: '4',
         num_comments: 1,
         points: 2,
-        objectID: "b"
-      }
+        objectID: 'b',
+      },
     ],
-    page: 1
+    page: 1,
   };
 
   const prevState = {
-    searchKey: "test",
+    searchKey: 'test',
     results: {
       test: {
         hits: [
           {
-            title: "1",
-            author: "1",
+            title: '1',
+            author: '1',
             num_comments: 1,
             points: 2,
-            objectID: "y"
+            objectID: 'y',
           },
           {
-            title: "2",
-            author: "2",
+            title: '2',
+            author: '2',
             num_comments: 1,
             points: 2,
-            objectID: "z"
-          }
+            objectID: 'z',
+          },
         ],
-        page: 0
-      }
-    }
+        page: 0,
+      },
+    },
   };
 
-  it("concatenates new results", () => {
+  it('concatenates new results', () => {
     const { hits, page } = results;
-    const newState = updateSearchTopStoriesState(hits, page)(prevState);
+    const newState = updateSearchTopStoriesState(hits, page)(
+      prevState,
+    );
     expect(newState.results.test.hits.length).toEqual(4);
   });
 });

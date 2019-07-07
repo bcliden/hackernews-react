@@ -1,16 +1,19 @@
-import React, { Component } from "react";
-import axios from "axios";
+import React, { Component } from 'react';
+import axios from 'axios';
 
 import {
   FRONT_PAGE_BASE,
   FRONT_PAGE_STORIES,
-  FRONT_PAGE_ITEM
-} from "../constants";
+  FRONT_PAGE_ITEM,
+} from '../constants';
 
-import Table from "../components/Table";
-import Button from "../components/Button";
-import { withError, withLoading } from "../components/HOCs";
-import { updateTopPageState, dismissStoryFromTopPageState } from "../utils";
+import Table from '../components/Table';
+import Button from '../components/Button';
+import { withError, withLoading } from '../components/HOCs';
+import {
+  updateTopPageState,
+  dismissStoryFromTopPageState,
+} from '../utils';
 
 //HOCs
 const TableWithError = withError(Table);
@@ -22,7 +25,7 @@ export class TopPage extends Component {
     page: 0,
     results: null,
     error: null,
-    isLoading: false
+    isLoading: false,
   };
 
   source = axios.CancelToken.source();
@@ -33,7 +36,7 @@ export class TopPage extends Component {
     this.setState({ isLoading: true });
     const response = await axios.get(
       `${FRONT_PAGE_BASE}${FRONT_PAGE_STORIES}`,
-      { cancelToken: this.source.token }
+      { cancelToken: this.source.token },
     );
     this.setState({ postIndex: response.data });
   };
@@ -51,10 +54,10 @@ export class TopPage extends Component {
         return await axios.get(
           `${FRONT_PAGE_BASE}${FRONT_PAGE_ITEM}${id}.json`,
           {
-            cancelToken: this.source.token
-          }
+            cancelToken: this.source.token,
+          },
         );
-      })
+      }),
     );
 
     // convert the FireBase API format to the Algolia format (which Table expects)
@@ -65,7 +68,7 @@ export class TopPage extends Component {
         author: post.by,
         num_comments: post.descendants,
         points: post.score,
-        objectID: String(post.id) // Table expects a string
+        objectID: String(post.id), // Table expects a string
       };
     });
     this.setTopStories(posts);
@@ -86,7 +89,11 @@ export class TopPage extends Component {
     const list = results || [];
     return (
       <div className="page">
-        <TableWithError error={error} list={list} onDismiss={this.onDismiss} />
+        <TableWithError
+          error={error}
+          list={list}
+          onDismiss={this.onDismiss}
+        />
         <div className="interactions">
           <ButtonWithLoading
             isLoading={isLoading}
@@ -106,7 +113,7 @@ export class TopPage extends Component {
 
   componentWillUnmount() {
     // cancel axios requests
-    this.source.cancel("Component unmounting.");
+    this.source.cancel('Component unmounting.');
   }
 }
 

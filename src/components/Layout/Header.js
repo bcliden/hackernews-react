@@ -1,17 +1,17 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 
 export default function Header({ children, links }) {
   const initials = children
-    .split(" ")
+    .split(' ')
     .map(word => word[0].toLowerCase())
-    .join("");
+    .join('');
   return (
     <header className="header">
-      <h1 style={{ position: "inline" }} className="forLargeScreen">
-        { children }
+      <h1 style={{ position: 'inline' }} className="forLargeScreen">
+        {children}
       </h1>
-      <h1 style={{ position: "inline" }} className="forSmallScreen">
+      <h1 style={{ position: 'inline' }} className="forSmallScreen">
         {initials}
       </h1>
       <nav>
