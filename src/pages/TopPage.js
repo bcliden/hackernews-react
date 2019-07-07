@@ -35,12 +35,12 @@ export class TopPage extends Component {
       `${FRONT_PAGE_BASE}${FRONT_PAGE_STORIES}`,
       { cancelToken: this.source.token }
     );
-    this.setState({ postIndex: response.data, isLoading: false });
+    this.setState({ postIndex: response.data });
   };
 
   fetchTopStories = async (page = 0) => {
     // hydrate ids from the index cache
-    this.setState({ isLoading: true, page });
+    this.setState({ page });
     const pageStart = page * 20;
     const pageEnd = pageStart + 20;
 

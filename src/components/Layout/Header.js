@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 export default function Header({ children, links }) {
   const initials = children
@@ -9,7 +9,7 @@ export default function Header({ children, links }) {
   return (
     <header className="header">
       <h1 style={{ position: "inline" }} className="forLargeScreen">
-        {children}
+        <Link to={`/top`}>{children}</Link>
       </h1>
       <h1 style={{ position: "inline" }} className="forSmallScreen">
         {initials}

@@ -9,7 +9,8 @@ import "./Table.css";
 export class Table extends Component {
   state = {
     sortKey: "NONE",
-    isSortReverse: false
+    isSortReverse: false,
+    width: 0
   };
 
   onSort = sortKey => {
@@ -20,6 +21,12 @@ export class Table extends Component {
       return { sortKey, isSortReverse };
     });
   };
+
+  useFallback = (text, iconName, width = 1200) => {
+    return this.state.width <= width
+      ? <i className={`fas fa-${iconName}`}></i>
+      : text
+  }
 
   render() {
     const { list, onDismiss } = this.props;
@@ -56,7 +63,7 @@ export class Table extends Component {
               activeSortKey={sortKey}
               isSortReverse={isSortReverse}
             >
-              Comments
+              { this.useFallback('Comments', 'comment') }
             </Sort>
           </span>
           <span className="smallColumn">
@@ -66,10 +73,12 @@ export class Table extends Component {
               activeSortKey={sortKey}
               isSortReverse={isSortReverse}
             >
-              Points
+              { this.useFallback('Points', 'star')}
             </Sort>
           </span>
-          <span className="smallColumn">Archive</span>
+          <span className="tinyColumn">
+            { this.useFallback('Archive', 'archive') }
+          </span>
         </div>
         {reverseSortedList.map(item => {
           return <Row key={item.objectID} item={item} onDismiss={onDismiss} />;
@@ -78,16 +87,29 @@ export class Table extends Component {
     );
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    // prevent table from rerendering on every keystroke
-    if (
-      this.props.list === nextProps.list &&
-      this.state.sortKey === nextState.sortKey &&
-      this.state.isSortReverse === nextState.isSortReverse
-    ) {
-      return false;
-    }
-    return true;
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   // prevent table from rerendering on every keystroke
+  //   if (
+  //     this.props.list === nextProps.list &&
+  //     this.state.sortKey === nextState.sortKey &&
+  //     this.state.isSortReverse === nextState.isSortReverse
+  //   ) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
+
+  componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
+  
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+  
+  updateWindowDimensions = () => {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
   }
 }
 

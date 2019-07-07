@@ -17,12 +17,13 @@ export class Row extends Component {
           </a>
         </span>
         <span className="smallColumn">{item.points}</span>
-        <span className="smallColumn">
+        <span className="tinyColumn">
           <Button
             onClick={() => onDismiss(item.objectID)}
             className="button-inline"
+            style={{ transform: 'scale(1.6)'}}
           >
-            Dismiss
+            &times;
           </Button>
         </span>
         <span className="smallTagLine">

@@ -47,7 +47,13 @@
 }
 
 .smallColumn {
-  width: 10%;
+  width: 12.5%;
+  text-align: center;
+}
+
+.tinyColumn {
+  width: 5%;
+  text-align: center;
 }
 
 .smallTagLine {
@@ -87,7 +93,20 @@
     display: none;
   }
 
+  .tinyColumn {
+    display: none;
+  }
+
   .smallTagLine {
     display: block;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .smallColumn {
+    width: 10%;
+  }
+  .tinyColumn {
+    width: 10%;
   }
 }
