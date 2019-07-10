@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
+
 import Button from '../Button';
 import { COMMENTS_LINK_BASE } from '../../constants';
 
-export class Row extends Component {
-  render() {
-    const { item, onDismiss } = this.props;
+
+
+export const Row = ({ item, onDismiss }) => {
     return (
       <div key={item.objectID} className="table-row">
         <span className="largeColumn">
@@ -34,7 +35,6 @@ export class Row extends Component {
         </span>
       </div>
     );
-  }
 }
 
 export default Row;
