@@ -5,6 +5,7 @@ import {
   Route,
   Redirect,
 } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import { TopPage, SearchPage } from './pages';
 import './App.css';
@@ -148,63 +149,77 @@ class App extends Component {
     return (
       <Router>
         <Header links={links}>Hacker News</Header>
-        <Route exact path="/">
-          <Redirect to="/top" />
-        </Route>
-        <Route
-          path="/top"
-          render={props => {
-            const {
-              topResults,
-              topPage,
-              topIndex,
-              error,
-              isLoading,
-            } = this.state;
-            return (
-              <TopPage
-                {...props}
-                results={topResults}
-                page={topPage}
-                error={error}
-                index={topIndex}
-                isLoading={isLoading}
-                onDismiss={this.onTopDismiss}
-                fetchTopStories={this.fetchTopStories}
-                fetchTopStoriesIndex={this.fetchTopStoriesIndex}
-              />
-            );
-          }}
-        />
-        <Route
-          path="/search"
-          render={props => {
-            const {
-              searchKey,
-              searchTerm,
-              searchResults,
-              error,
-              isLoading,
-            } = this.state;
-            return (
-              <SearchPage
-                {...props}
-                results={searchResults}
-                searchKey={searchKey}
-                searchTerm={searchTerm}
-                error={error}
-                isLoading={isLoading}
-                fetchSearchStories={this.fetchSearchStories}
-                setSearchStories={this.setSearchStories}
-                needsToSearchStories={this.needsToSearchStories}
-                onSubmit={this.onSearchSubmit}
-                onDismiss={this.onSearchDismiss}
-                onChange={this.onSearchChange}
-                onSearchKeyChange={this.onSearchKeyChange}
-              />
-            );
-          }}
-        />
+        <AnimatePresence>
+          <Route exact path="/">
+            <Redirect to="/top" />
+          </Route>
+          <Route
+            path="/top"
+            render={props => {
+              const {
+                topResults,
+                topPage,
+                topIndex,
+                error,
+                isLoading,
+              } = this.state;
+              return (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <TopPage
+                    {...props}
+                    results={topResults}
+                    page={topPage}
+                    error={error}
+                    index={topIndex}
+                    isLoading={isLoading}
+                    onDismiss={this.onTopDismiss}
+                    fetchTopStories={this.fetchTopStories}
+                    fetchTopStoriesIndex={this.fetchTopStoriesIndex}
+                  />
+                </motion.div>
+              );
+            }}
+          />
+          <Route
+            path="/search"
+            render={props => {
+              const {
+                searchKey,
+                searchTerm,
+                searchResults,
+                error,
+                isLoading,
+              } = this.state;
+              return (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <SearchPage
+                    {...props}
+                    results={searchResults}
+                    searchKey={searchKey}
+                    searchTerm={searchTerm}
+                    error={error}
+                    isLoading={isLoading}
+                    fetchSearchStories={this.fetchSearchStories}
+                    setSearchStories={this.setSearchStories}
+                    needsToSearchStories={this.needsToSearchStories}
+                    onSubmit={this.onSearchSubmit}
+                    onDismiss={this.onSearchDismiss}
+                    onChange={this.onSearchChange}
+                    onSearchKeyChange={this.onSearchKeyChange}
+                  />
+                </motion.div>
+              );
+            }}
+          />
+        </AnimatePresence>
       </Router>
     );
   }

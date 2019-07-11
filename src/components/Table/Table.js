@@ -89,10 +89,7 @@ export class Table extends Component {
         {reverseSortedList.map(item => {
           return (
             <motion.div
-            // className="table-row"
             key={item.objectID}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             positionTransition
           >
