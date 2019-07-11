@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { SORTS } from '../../constants';
 import Row from './Row';
@@ -84,15 +85,26 @@ export class Table extends Component {
             {this.useFallback('Archive', 'archive')}
           </span>
         </div>
+        <AnimatePresence>
         {reverseSortedList.map(item => {
           return (
+            <motion.div
+            // className="table-row"
+            key={item.objectID}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            positionTransition
+          >
             <Row
               key={item.objectID}
               item={item}
               onDismiss={onDismiss}
             />
+          </motion.div>
           );
         })}
+        </AnimatePresence>
       </div>
     );
   }
